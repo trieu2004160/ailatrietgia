@@ -1,0 +1,201 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
+
+@layer base {
+  :root {
+    /* Game theme - Deep blue with gold accents */
+    --background: 222 47% 8%;
+    --foreground: 45 100% 90%;
+
+    --card: 222 47% 12%;
+    --card-foreground: 45 100% 90%;
+
+    --popover: 222 47% 10%;
+    --popover-foreground: 45 100% 90%;
+
+    --primary: 45 100% 50%;
+    --primary-foreground: 222 47% 8%;
+
+    --secondary: 210 100% 40%;
+    --secondary-foreground: 45 100% 95%;
+
+    --muted: 222 30% 20%;
+    --muted-foreground: 210 20% 60%;
+
+    --accent: 45 100% 60%;
+    --accent-foreground: 222 47% 8%;
+
+    --destructive: 0 84% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 76% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --border: 222 30% 25%;
+    --input: 222 30% 25%;
+    --ring: 45 100% 50%;
+
+    --radius: 0.5rem;
+
+    /* Custom game colors */
+    --gold: 45 100% 50%;
+    --gold-light: 45 100% 70%;
+    --gold-dark: 45 100% 35%;
+    --navy: 222 47% 8%;
+    --navy-light: 222 47% 15%;
+    --navy-lighter: 222 40% 25%;
+    --glow-gold: 0 0 20px hsl(45 100% 50% / 0.5);
+    --glow-blue: 0 0 30px hsl(210 100% 50% / 0.3);
+    --glow-green: 0 0 20px hsl(142 76% 45% / 0.5);
+    --glow-red: 0 0 20px hsl(0 84% 50% / 0.5);
+
+    /* Gradients */
+    --gradient-radial: radial-gradient(ellipse at center, hsl(222 47% 15%) 0%, hsl(222 47% 5%) 100%);
+    --gradient-answer: linear-gradient(135deg, hsl(222 47% 18%) 0%, hsl(222 47% 12%) 100%);
+    --gradient-answer-hover: linear-gradient(135deg, hsl(210 100% 30%) 0%, hsl(210 100% 20%) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(45 100% 55%) 0%, hsl(45 100% 40%) 100%);
+    --gradient-correct: linear-gradient(135deg, hsl(142 76% 40%) 0%, hsl(142 76% 30%) 100%);
+    --gradient-wrong: linear-gradient(135deg, hsl(0 84% 45%) 0%, hsl(0 84% 35%) 100%);
+  }
+
+  .dark {
+    --background: 222 47% 8%;
+    --foreground: 45 100% 90%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    background: var(--gradient-radial);
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .font-display {
+    font-family: 'Oswald', sans-serif;
+  }
+
+  .font-body {
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .answer-hexagon {
+    @apply relative px-8 py-4 font-display text-lg uppercase tracking-wide;
+    background: var(--gradient-answer);
+    clip-path: polygon(5% 0%, 95% 0%, 100% 50%, 95% 100%, 5% 100%, 0% 50%);
+    border: 2px solid hsl(var(--gold) / 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .answer-hexagon:hover {
+    background: var(--gradient-answer-hover);
+    border-color: hsl(var(--gold));
+    box-shadow: var(--glow-gold);
+    transform: scale(1.02);
+  }
+
+  .answer-hexagon.selected {
+    background: var(--gradient-gold);
+    border-color: hsl(var(--gold));
+    box-shadow: var(--glow-gold);
+  }
+
+  .answer-hexagon.correct {
+    background: var(--gradient-correct);
+    border-color: hsl(var(--success));
+    box-shadow: var(--glow-green);
+  }
+
+  .answer-hexagon.wrong {
+    background: var(--gradient-wrong);
+    border-color: hsl(var(--destructive));
+    box-shadow: var(--glow-red);
+  }
+
+  .money-step {
+    @apply px-4 py-2 text-right font-display tracking-wide transition-all duration-300;
+  }
+
+  .money-step.current {
+    @apply text-primary scale-110;
+    text-shadow: var(--glow-gold);
+  }
+
+  .money-step.passed {
+    @apply text-success;
+  }
+
+  .money-step.milestone {
+    @apply text-accent font-bold;
+  }
+
+  .lifeline-btn {
+    @apply w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300;
+    background: var(--gradient-answer);
+    border: 2px solid hsl(var(--gold) / 0.5);
+  }
+
+  .lifeline-btn:hover:not(:disabled) {
+    border-color: hsl(var(--gold));
+    box-shadow: var(--glow-gold);
+    transform: scale(1.1);
+  }
+
+  .lifeline-btn:disabled {
+    @apply opacity-30 cursor-not-allowed;
+  }
+
+  .game-title {
+    @apply font-display text-4xl md:text-6xl text-center;
+    background: linear-gradient(135deg, hsl(var(--gold-light)) 0%, hsl(var(--gold)) 50%, hsl(var(--gold-dark)) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 40px hsl(var(--gold) / 0.3);
+  }
+
+  .question-box {
+    @apply px-8 py-6 text-center font-display text-xl md:text-2xl;
+    background: var(--gradient-answer);
+    clip-path: polygon(3% 0%, 97% 0%, 100% 50%, 97% 100%, 3% 100%, 0% 50%);
+    border: 2px solid hsl(var(--gold) / 0.5);
+  }
+
+  .spotlight {
+    position: fixed;
+    top: -50%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, hsl(210 100% 50% / 0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px hsl(var(--gold) / 0.3); }
+    50% { box-shadow: 0 0 40px hsl(var(--gold) / 0.6); }
+  }
+
+  .pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .float {
+    animation: float 3s ease-in-out infinite;
+  }
+}
