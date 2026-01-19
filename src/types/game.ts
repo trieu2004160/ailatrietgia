@@ -12,12 +12,13 @@ export interface Question {
 
 export interface GameState {
   currentQuestionIndex: number;
+  currentQuestionSetIndex: number;
   selectedAnswer: 'A' | 'B' | 'C' | 'D' | null;
   answerState: 'selecting' | 'locked' | 'revealed';
   lifelines: {
     fiftyFifty: boolean;
-    phoneAFriend: boolean;
     askAudience: boolean;
+    askExpert: boolean;
   };
   eliminatedAnswers: ('A' | 'B' | 'C' | 'D')[];
   gameOver: boolean;
@@ -26,21 +27,21 @@ export interface GameState {
 }
 
 export const MONEY_LADDER = [
-  200000,      // 1
-  400000,      // 2
-  600000,      // 3
-  1000000,     // 4
-  2000000,     // 5 - Milestone
-  3000000,     // 6
-  6000000,     // 7
-  10000000,    // 8
-  14000000,    // 9
-  22000000,    // 10 - Milestone
-  30000000,    // 11
-  40000000,    // 12
-  60000000,    // 13
-  85000000,    // 14
-  150000000,   // 15 - Winner!
+  2000,        // 1
+  4000,        // 2
+  6000,        // 3
+  8000,        // 4
+  10000,       // 5 - Milestone
+  15000,       // 6
+  20000,       // 7
+  30000,       // 8
+  40000,       // 9
+  50000,       // 10 - Milestone
+  55000,       // 11
+  60000,       // 12
+  65000,       // 13
+  70000,       // 14
+  80000,       // 15 - Winner!
 ];
 
-export const MILESTONES = [4, 9, 14]; // 0-indexed positions for 2M, 22M, 150M
+export const MILESTONES = [4, 9, 14]; // 0-indexed positions for 10000, 50000, 80000

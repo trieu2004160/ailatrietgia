@@ -7,7 +7,7 @@ import MoneyLadder from '@/components/game/MoneyLadder';
 import Lifelines from '@/components/game/Lifelines';
 import GameOver from '@/components/game/GameOver';
 import AudiencePoll from '@/components/game/AudiencePoll';
-import PhoneFriend from '@/components/game/PhoneFriend';
+import AskExpert from '@/components/game/AskExpert';
 import { Check } from 'lucide-react';
 
 const Index = () => {
@@ -20,30 +20,27 @@ const Index = () => {
     selectAnswer,
     lockAnswer,
     useFiftyFifty,
-    usePhoneAFriend,
     useAskAudience,
+    useAskExpert,
     restartGame,
   } = useGame();
 
   const [showAudiencePoll, setShowAudiencePoll] = useState(false);
   const [audiencePercentages, setAudiencePercentages] = useState({ A: 0, B: 0, C: 0, D: 0 });
-  const [showPhoneFriend, setShowPhoneFriend] = useState(false);
+  const [showAskExpert, setShowAskExpert] = useState(false);
 
   if (!gameStarted) {
     return <StartScreen onStart={startGame} />;
   }
 
   const handleAskAudience = () => {
-    const percentages = useAskAudience();
-    if (percentages) {
-      setAudiencePercentages(percentages);
-      setShowAudiencePoll(true);
-    }
+    useAskAudience();
+    // Không hiển thị modal - để hỏi khán giả thật tại lớp
   };
 
-  const handlePhoneFriend = () => {
-    usePhoneAFriend();
-    setShowPhoneFriend(true);
+  const handleAskExpert = () => {
+    useAskExpert();
+    // Không hiển thị modal - để hỏi nhà thông thái thật tại lớp
   };
 
   const answers = ['A', 'B', 'C', 'D'] as const;
@@ -64,11 +61,11 @@ const Index = () => {
             {/* Lifelines */}
             <Lifelines
               fiftyFifty={state.lifelines.fiftyFifty}
-              phoneAFriend={state.lifelines.phoneAFriend}
               askAudience={state.lifelines.askAudience}
+              askExpert={state.lifelines.askExpert}
               onUseFiftyFifty={useFiftyFifty}
-              onUsePhoneAFriend={handlePhoneFriend}
               onUseAskAudience={handleAskAudience}
+              onUseAskExpert={handleAskExpert}
               disabled={state.answerState !== 'selecting'}
             />
 
@@ -147,11 +144,11 @@ const Index = () => {
         />
       )}
 
-      {showPhoneFriend && (
-        <PhoneFriend
+      {showAskExpert && (
+        <AskExpert
           correctAnswer={currentQuestion.correct}
           eliminatedAnswers={state.eliminatedAnswers}
-          onClose={() => setShowPhoneFriend(false)}
+          onClose={() => setShowAskExpert(false)}
         />
       )}
     </div>

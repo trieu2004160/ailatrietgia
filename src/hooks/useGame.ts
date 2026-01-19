@@ -1,15 +1,16 @@
 import { useState, useCallback } from 'react';
 import { Question, GameState, MONEY_LADDER, MILESTONES } from '@/types/game';
-import { sampleQuestions } from '@/data/questions';
+import { allQuestionSets } from '@/data/questions';
 
 const initialState: GameState = {
   currentQuestionIndex: 0,
+  currentQuestionSetIndex: 0,
   selectedAnswer: null,
   answerState: 'selecting',
   lifelines: {
     fiftyFifty: true,
-    phoneAFriend: true,
     askAudience: true,
+    askExpert: true,
   },
   eliminatedAnswers: [],
   gameOver: false,
@@ -17,11 +18,12 @@ const initialState: GameState = {
   moneyWon: 0,
 };
 
-export const useGame = (questions: Question[] = sampleQuestions) => {
+export const useGame = () => {
   const [state, setState] = useState<GameState>(initialState);
   const [gameStarted, setGameStarted] = useState(false);
 
-  const currentQuestion = questions[state.currentQuestionIndex];
+  const currentQuestions = allQuestionSets[state.currentQuestionSetIndex];
+  const currentQuestion = currentQuestions[state.currentQuestionIndex];
 
   const startGame = useCallback(() => {
     setState(initialState);
@@ -46,7 +48,7 @@ export const useGame = (questions: Question[] = sampleQuestions) => {
         const isCorrect = state.selectedAnswer === currentQuestion.correct;
         
         if (isCorrect) {
-          if (state.currentQuestionIndex === questions.length - 1) {
+          if (state.currentQuestionIndex === currentQuestions.length - 1) {
             // Won the game!
             setState(prev => ({
               ...prev,
@@ -74,16 +76,26 @@ export const useGame = (questions: Question[] = sampleQuestions) => {
             }
           }
           
+          // Switch to a different question set
+          let newQuestionSetIndex = state.currentQuestionSetIndex;
+          if (allQuestionSets.length > 1) {
+            // Get a random different question set
+            do {
+              newQuestionSetIndex = Math.floor(Math.random() * allQuestionSets.length);
+            } while (newQuestionSetIndex === state.currentQuestionSetIndex && allQuestionSets.length > 1);
+          }
+          
           setState(prev => ({
             ...prev,
             gameOver: true,
             won: false,
             moneyWon,
+            currentQuestionSetIndex: newQuestionSetIndex, // Store the new question set for restart
           }));
         }
       }, 2000);
     }, 1500);
-  }, [state.selectedAnswer, state.answerState, state.currentQuestionIndex, currentQuestion, questions.length]);
+  }, [state.selectedAnswer, state.answerState, state.currentQuestionIndex, state.currentQuestionSetIndex, currentQuestion, currentQuestions.length]);
 
   const useFiftyFifty = useCallback(() => {
     if (!state.lifelines.fiftyFifty || state.answerState !== 'selecting') return;
@@ -102,15 +114,6 @@ export const useGame = (questions: Question[] = sampleQuestions) => {
       eliminatedAnswers: [...prev.eliminatedAnswers, ...toEliminate],
     }));
   }, [state.lifelines.fiftyFifty, state.answerState, currentQuestion, state.eliminatedAnswers]);
-
-  const usePhoneAFriend = useCallback(() => {
-    if (!state.lifelines.phoneAFriend || state.answerState !== 'selecting') return;
-    setState(prev => ({
-      ...prev,
-      lifelines: { ...prev.lifelines, phoneAFriend: false },
-    }));
-    return currentQuestion.correct;
-  }, [state.lifelines.phoneAFriend, state.answerState, currentQuestion]);
 
   const useAskAudience = useCallback(() => {
     if (!state.lifelines.askAudience || state.answerState !== 'selecting') return;
@@ -149,8 +152,20 @@ export const useGame = (questions: Question[] = sampleQuestions) => {
     return percentages;
   }, [state.lifelines.askAudience, state.answerState, currentQuestion, state.eliminatedAnswers]);
 
+  const useAskExpert = useCallback(() => {
+    if (!state.lifelines.askExpert || state.answerState !== 'selecting') return;
+    setState(prev => ({
+      ...prev,
+      lifelines: { ...prev.lifelines, askExpert: false },
+    }));
+    return currentQuestion.correct;
+  }, [state.lifelines.askExpert, state.answerState, currentQuestion]);
+
   const restartGame = useCallback(() => {
-    setState(initialState);
+    setState(prev => ({
+      ...initialState,
+      currentQuestionSetIndex: prev.currentQuestionSetIndex, // Keep the new question set
+    }));
     setGameStarted(false);
   }, []);
 
@@ -158,13 +173,13 @@ export const useGame = (questions: Question[] = sampleQuestions) => {
     state,
     gameStarted,
     currentQuestion,
-    totalQuestions: questions.length,
+    totalQuestions: currentQuestions.length,
     startGame,
     selectAnswer,
     lockAnswer,
     useFiftyFifty,
-    usePhoneAFriend,
     useAskAudience,
+    useAskExpert,
     restartGame,
   };
 };

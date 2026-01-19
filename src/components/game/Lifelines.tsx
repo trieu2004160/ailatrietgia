@@ -1,23 +1,23 @@
-import { Phone, Users, Percent } from 'lucide-react';
+import { Users, Percent, GraduationCap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface LifelinesProps {
   fiftyFifty: boolean;
-  phoneAFriend: boolean;
   askAudience: boolean;
+  askExpert: boolean;
   onUseFiftyFifty: () => void;
-  onUsePhoneAFriend: () => void;
   onUseAskAudience: () => void;
+  onUseAskExpert: () => void;
   disabled: boolean;
 }
 
 const Lifelines = ({
   fiftyFifty,
-  phoneAFriend,
   askAudience,
+  askExpert,
   onUseFiftyFifty,
-  onUsePhoneAFriend,
   onUseAskAudience,
+  onUseAskExpert,
   disabled
 }: LifelinesProps) => {
   return (
@@ -32,21 +32,21 @@ const Lifelines = ({
       </button>
       
       <button
-        onClick={onUsePhoneAFriend}
-        disabled={!phoneAFriend || disabled}
-        className={cn("lifeline-btn", !phoneAFriend && "opacity-30")}
-        title="Gọi điện cho người thân"
-      >
-        <Phone className="w-6 h-6 text-primary" />
-      </button>
-      
-      <button
         onClick={onUseAskAudience}
         disabled={!askAudience || disabled}
         className={cn("lifeline-btn", !askAudience && "opacity-30")}
         title="Hỏi ý kiến khán giả"
       >
         <Users className="w-6 h-6 text-primary" />
+      </button>
+      
+      <button
+        onClick={onUseAskExpert}
+        disabled={!askExpert || disabled}
+        className={cn("lifeline-btn", !askExpert && "opacity-30")}
+        title="Hỏi nhà thông thái"
+      >
+        <GraduationCap className="w-6 h-6 text-primary" />
       </button>
     </div>
   );
