@@ -1,5 +1,5 @@
-import { Users, Percent, GraduationCap } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Users, Percent, GraduationCap } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface LifelinesProps {
   fiftyFifty: boolean;
@@ -18,7 +18,7 @@ const Lifelines = ({
   onUseFiftyFifty,
   onUseAskAudience,
   onUseAskExpert,
-  disabled
+  disabled,
 }: LifelinesProps) => {
   return (
     <div className="flex justify-center gap-4 md:gap-6">
@@ -30,7 +30,7 @@ const Lifelines = ({
       >
         <Percent className="w-6 h-6 text-primary" />
       </button>
-      
+
       <button
         onClick={onUseAskAudience}
         disabled={!askAudience || disabled}
@@ -39,7 +39,7 @@ const Lifelines = ({
       >
         <Users className="w-6 h-6 text-primary" />
       </button>
-      
+
       <button
         onClick={onUseAskExpert}
         disabled={!askExpert || disabled}

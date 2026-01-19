@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { useGame } from '@/hooks/useGame';
-import StartScreen from '@/components/game/StartScreen';
-import QuestionDisplay from '@/components/game/QuestionDisplay';
-import AnswerButton from '@/components/game/AnswerButton';
-import MoneyLadder from '@/components/game/MoneyLadder';
-import Lifelines from '@/components/game/Lifelines';
-import GameOver from '@/components/game/GameOver';
-import AudiencePoll from '@/components/game/AudiencePoll';
-import AskExpert from '@/components/game/AskExpert';
-import { Check } from 'lucide-react';
+import { useState } from "react";
+import { useGame } from "@/hooks/useGame";
+import StartScreen from "@/components/game/StartScreen";
+import QuestionDisplay from "@/components/game/QuestionDisplay";
+import AnswerButton from "@/components/game/AnswerButton";
+import MoneyLadder from "@/components/game/MoneyLadder";
+import Lifelines from "@/components/game/Lifelines";
+import GameOver from "@/components/game/GameOver";
+import AudiencePoll from "@/components/game/AudiencePoll";
+import AskExpert from "@/components/game/AskExpert";
+import { Check } from "lucide-react";
 
 const Index = () => {
   const {
@@ -26,7 +26,12 @@ const Index = () => {
   } = useGame();
 
   const [showAudiencePoll, setShowAudiencePoll] = useState(false);
-  const [audiencePercentages, setAudiencePercentages] = useState({ A: 0, B: 0, C: 0, D: 0 });
+  const [audiencePercentages, setAudiencePercentages] = useState({
+    A: 0,
+    B: 0,
+    C: 0,
+    D: 0,
+  });
   const [showAskExpert, setShowAskExpert] = useState(false);
 
   if (!gameStarted) {
@@ -43,12 +48,12 @@ const Index = () => {
     // Không hiển thị modal - để hỏi nhà thông thái thật tại lớp
   };
 
-  const answers = ['A', 'B', 'C', 'D'] as const;
+  const answers = ["A", "B", "C", "D"] as const;
 
   return (
     <div className="min-h-screen p-4 md:p-6">
       <div className="spotlight" />
-      
+
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header */}
         <div className="text-center mb-6">
@@ -66,7 +71,7 @@ const Index = () => {
               onUseFiftyFifty={useFiftyFifty}
               onUseAskAudience={handleAskAudience}
               onUseAskExpert={handleAskExpert}
-              disabled={state.answerState !== 'selecting'}
+              disabled={state.answerState !== "selecting"}
             />
 
             {/* Question */}
@@ -86,15 +91,15 @@ const Index = () => {
                   onClick={() => selectAnswer(letter)}
                   isSelected={state.selectedAnswer === letter}
                   isCorrect={letter === currentQuestion.correct}
-                  isRevealed={state.answerState === 'revealed'}
+                  isRevealed={state.answerState === "revealed"}
                   isEliminated={state.eliminatedAnswers.includes(letter)}
-                  disabled={state.answerState !== 'selecting'}
+                  disabled={state.answerState !== "selecting"}
                 />
               ))}
             </div>
 
             {/* Lock Answer Button */}
-            {state.selectedAnswer && state.answerState === 'selecting' && (
+            {state.selectedAnswer && state.answerState === "selecting" && (
               <div className="flex justify-center animate-scale-in">
                 <button
                   onClick={lockAnswer}
@@ -106,7 +111,7 @@ const Index = () => {
               </div>
             )}
 
-            {state.answerState === 'locked' && (
+            {state.answerState === "locked" && (
               <div className="text-center">
                 <p className="font-display text-xl text-primary animate-pulse">
                   Đáp án của bạn: {state.selectedAnswer}...
