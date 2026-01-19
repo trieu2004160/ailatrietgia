@@ -26,7 +26,10 @@ export const useGame = () => {
   const currentQuestion = currentQuestions[state.currentQuestionIndex];
 
   const startGame = useCallback(() => {
-    setState(initialState);
+    setState(prev => ({
+      ...initialState,
+      currentQuestionSetIndex: prev.currentQuestionSetIndex, // Keep the current question set
+    }));
     setGameStarted(true);
   }, []);
 
@@ -38,15 +41,15 @@ export const useGame = () => {
   const lockAnswer = useCallback(() => {
     if (!state.selectedAnswer || state.answerState !== 'selecting') return;
     setState(prev => ({ ...prev, answerState: 'locked' }));
-    
+
     // Reveal answer after delay
     setTimeout(() => {
       setState(prev => ({ ...prev, answerState: 'revealed' }));
-      
+
       // Check if correct
       setTimeout(() => {
         const isCorrect = state.selectedAnswer === currentQuestion.correct;
-        
+
         if (isCorrect) {
           if (state.currentQuestionIndex === currentQuestions.length - 1) {
             // Won the game!
@@ -75,39 +78,29 @@ export const useGame = () => {
               break;
             }
           }
-          
-          // Switch to a different question set
-          let newQuestionSetIndex = state.currentQuestionSetIndex;
-          if (allQuestionSets.length > 1) {
-            // Get a random different question set
-            do {
-              newQuestionSetIndex = Math.floor(Math.random() * allQuestionSets.length);
-            } while (newQuestionSetIndex === state.currentQuestionSetIndex && allQuestionSets.length > 1);
-          }
-          
+
           setState(prev => ({
             ...prev,
             gameOver: true,
             won: false,
             moneyWon,
-            currentQuestionSetIndex: newQuestionSetIndex, // Store the new question set for restart
           }));
         }
-      }, 2000);
+      }, 1000);
     }, 1500);
   }, [state.selectedAnswer, state.answerState, state.currentQuestionIndex, state.currentQuestionSetIndex, currentQuestion, currentQuestions.length]);
 
   const useFiftyFifty = useCallback(() => {
     if (!state.lifelines.fiftyFifty || state.answerState !== 'selecting') return;
-    
+
     const wrongAnswers = (['A', 'B', 'C', 'D'] as const).filter(
       a => a !== currentQuestion.correct && !state.eliminatedAnswers.includes(a)
     );
-    
+
     // Randomly eliminate 2 wrong answers
     const shuffled = [...wrongAnswers].sort(() => Math.random() - 0.5);
     const toEliminate = shuffled.slice(0, 2);
-    
+
     setState(prev => ({
       ...prev,
       lifelines: { ...prev.lifelines, fiftyFifty: false },
@@ -117,7 +110,7 @@ export const useGame = () => {
 
   const useAskAudience = useCallback(() => {
     if (!state.lifelines.askAudience || state.answerState !== 'selecting') return;
-    
+
     setState(prev => ({
       ...prev,
       lifelines: { ...prev.lifelines, askAudience: false },
@@ -128,15 +121,15 @@ export const useGame = () => {
     const available = (['A', 'B', 'C', 'D'] as const).filter(
       a => !state.eliminatedAnswers.includes(a)
     );
-    
+
     const percentages = { A: 0, B: 0, C: 0, D: 0 };
     let remaining = 100;
-    
+
     // Give correct answer 50-70%
     const correctPercentage = Math.floor(Math.random() * 20) + 50;
     percentages[correct] = correctPercentage;
     remaining -= correctPercentage;
-    
+
     // Distribute rest among available wrong answers
     const wrongAvailable = available.filter(a => a !== correct);
     wrongAvailable.forEach((answer, i) => {
@@ -148,7 +141,7 @@ export const useGame = () => {
         remaining -= portion;
       }
     });
-    
+
     return percentages;
   }, [state.lifelines.askAudience, state.answerState, currentQuestion, state.eliminatedAnswers]);
 
@@ -162,10 +155,19 @@ export const useGame = () => {
   }, [state.lifelines.askExpert, state.answerState, currentQuestion]);
 
   const restartGame = useCallback(() => {
-    setState(prev => ({
-      ...initialState,
-      currentQuestionSetIndex: prev.currentQuestionSetIndex, // Keep the new question set
-    }));
+    setState(prev => {
+      // Switch to the next question set (toggle between 0 and 1)
+      let newQuestionSetIndex = prev.currentQuestionSetIndex;
+      if (allQuestionSets.length > 1) {
+        // Simple toggle: if current is 0, go to 1; if 1, go to 0
+        newQuestionSetIndex = (prev.currentQuestionSetIndex + 1) % allQuestionSets.length;
+      }
+
+      return {
+        ...initialState,
+        currentQuestionSetIndex: newQuestionSetIndex,
+      };
+    });
     setGameStarted(false);
   }, []);
 
